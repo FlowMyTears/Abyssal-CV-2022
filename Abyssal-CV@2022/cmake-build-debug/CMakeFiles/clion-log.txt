@@ -1,0 +1,21 @@
+/snap/clion/180/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/snap/clion/180/bin/ninja/linux/ninja -G Ninja /home/sleepingmachine/RoboMaster2022_Code/Abyssal/Abyssal-CV@2022
+CMake Error at CMakeLists.txt:17 (find_package):
+  By not providing "Findngraph.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "ngraph", but
+  CMake did not find one.
+
+  Could not find a package configuration file provided by "ngraph" with any
+  of the following names:
+
+    ngraphConfig.cmake
+    ngraph-config.cmake
+
+  Add the installation prefix of "ngraph" to CMAKE_PREFIX_PATH or set
+  "ngraph_DIR" to a directory containing one of the above files.  If "ngraph"
+  provides a separate development package or SDK, be sure it has been
+  installed.
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/sleepingmachine/RoboMaster2022_Code/Abyssal/Abyssal-CV@2022/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "/home/sleepingmachine/RoboMaster2022_Code/Abyssal/Abyssal-CV@2022/cmake-build-debug/CMakeFiles/CMakeError.log".
