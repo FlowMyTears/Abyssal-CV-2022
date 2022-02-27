@@ -37,7 +37,8 @@ add_executable(Abyssal_CV_2022
         src/armor/armor-tool.hpp
 
         src/video/video-save.hpp
-        src/video/video-save.cpp)
+        src/video/video-save.cpp
+        src/serial/serial-port.hpp src/serial/serial-port.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_link_libraries(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/lib/libMVSDK.so")

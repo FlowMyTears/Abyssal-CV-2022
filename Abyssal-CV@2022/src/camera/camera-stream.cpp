@@ -33,6 +33,7 @@ int CameraStream::InitCamera() {
     //没有连接设备
     if(iCameraCounts==0){
         printf("no camera find");
+        exit(0);
         return -1;
     }
 
@@ -42,6 +43,7 @@ int CameraStream::InitCamera() {
     //初始化失败
     printf("state = %d\n", iStatus);
     if(iStatus!=CAMERA_STATUS_SUCCESS){
+        exit(0);
         return -1;
     }
 
