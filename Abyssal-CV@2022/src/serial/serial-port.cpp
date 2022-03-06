@@ -4,6 +4,7 @@
 
 //DEMOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 #include "serial-port.hpp"
+std::mutex mutex2;
 
 static SerialConfig serialConfig = SerialConfigFactory::getSerialConfig();
 SerialPort::SerialPort() {}
@@ -13,14 +14,10 @@ std::string SerialPort::write_device;
 int SerialPort::baud_write;
 int SerialPort::baud_read;
 
-void SerialPort::SerialCommunication() {
-    getSerialInfo();
-    checkPortAvailability();
-}
+char SerialPort::testData[5];
 
-char SerialPort::testData[6];
+void SerialPort::SendData(int* sentData) {
 
-void SerialPort::sendData() {
     int fd; /*File Descriptor*/
 
     printf("\n +----------------------------------+");
@@ -74,20 +71,38 @@ void SerialPort::sendData() {
     int bytes_written = 0;
 
     //串口写数据
-    bytes_written = write(fd, SerialPort::testData, sizeof(write_buffer));
-    printf("\n  %s written to ttyUSB0", SerialPort::testData);
+    bytes_written = write(fd, SerialPort::testData, sizeof(testData));
+    //printf("\n  %s written to ttyUSB0", SerialPort::testData);
     printf("\n  %d Bytes written to ttyUSB0", bytes_written);
     printf("\n +----------------------------------+\n\n");
-
+/*
+    for (int i = 0; i < sizeof(testData); ++i) {
+        std::cout << testData[i] << std::endl;
+    }
+*/
     close(fd);
 }
 
-void SerialPort::getHitPointData(int hitPointData) {
-    for (int i = 0; i < 6; i++)
-    {
-        SerialPort::testData[i] = (hitPointData >> (8 * i)) & 0xff;
+void SerialPort::getHitPointData(int hitPointData_x, int hitPointData_y) {
+/*
+    SerialPort::testData[0] = hitPointData / 100;
+    SerialPort::testData[1] = (hitPointData - SerialPort::testData[0]*100) /10;
+    SerialPort::testData[2] = hitPointData % 10;
+*/
+    for (int i = 0; i < 4; ++i) {
+        testData[0] = 'p';
+        testData[1] = (( hitPointData_x>> 8) & 0xFF);
+        testData[2] = (( hitPointData_x>> 0) & 0xFF);
+        testData[3] = (( hitPointData_y>> 8) & 0xFF);
+        testData[4] = (( hitPointData_y>> 0) & 0xFF);
     }
-    sendData();
+    std::cout << hitPointData_x << std::endl;
+    std::cout << hitPointData_y << std::endl;
+    //std::cout << testData[0] << " " << testData[1] << std::endl;
+    for (int i = 0; i < 3; ++i) {
+
+    }
+    //sendData();
 }
 
 void SerialPort::checkPortAvailability()

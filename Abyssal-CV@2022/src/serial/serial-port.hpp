@@ -21,16 +21,17 @@ class SerialPort{
 public:
     SerialPort();
     ~SerialPort();
-    static void getHitPointData(int hitPointData);
-    static void SerialCommunication();
+    static void getHitPointData(int hitPointData_x, int hitPointData_y);
+
+    static void SendData(int* sentData);
+
 private:
     static std::string read_device;
     static std::string write_device;
     static int baud_write;
     static int baud_read;
 
-    static char testData[6];
-    static void sendData();
+    static char testData[5];
 
     static void checkPortAvailability();
     static void getSerialInfo();

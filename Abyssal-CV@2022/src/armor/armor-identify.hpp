@@ -67,7 +67,7 @@ public:
     IdentifyArmor();
     ~IdentifyArmor() {}
 
-    static void IdentifyStream(cv::Mat* pFrame);
+    static void IdentifyStream(cv::Mat* pFrame, int* sentData);
 };
 
 #endif //ABYSSAL_CV_2022_ARMOR_IDENTIFY_HPP

@@ -42,7 +42,7 @@ rule CXX_EXECUTABLE_LINKER__Abyssal_CV_2022_DEBUG
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /snap/clion/178/bin/cmake/linux/bin/cmake --regenerate-during-build -S/home/sleepingmachine/RoboMaster2022_Code/Abyssal/Abyssal-CV@2022 -B/home/sleepingmachine/RoboMaster2022_Code/Abyssal/Abyssal-CV@2022/cmake-build-debug
+  command = /snap/clion/180/bin/cmake/linux/bin/cmake --regenerate-during-build -S/home/sleepingmachine/RoboMaster2022_Code/Abyssal/Abyssal-CV@2022 -B/home/sleepingmachine/RoboMaster2022_Code/Abyssal/Abyssal-CV@2022/cmake-build-debug
   description = Re-running CMake...
   generator = 1
 

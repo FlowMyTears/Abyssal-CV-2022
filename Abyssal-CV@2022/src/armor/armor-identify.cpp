@@ -4,6 +4,7 @@
 #include "armor-identify.hpp"
 
 extern std::mutex mutex1;
+extern std::mutex mutex2;
 extern std::atomic_bool CameraisOpen;
 
 //默认hsv颜色阈值
@@ -34,7 +35,7 @@ cv::Mat IdentifyArmor::dstHSV(480, 640, CV_8UC3);
 
 IdentifyArmor::IdentifyArmor() {}
 
-void IdentifyArmor::IdentifyStream(cv::Mat *pFrame) {
+void IdentifyArmor::IdentifyStream(cv::Mat *pFrame, int* sentData) {
 //#if DEBUG
     CreatTrackbars();
 //#endif
@@ -53,19 +54,23 @@ void IdentifyArmor::IdentifyStream(cv::Mat *pFrame) {
         ImagePreprocess(src);
         FindLightbar(dstHSV);
         LightBarsPairing();
+        FilterErrorArmor();
 
         for(int i = 0; i < armorStructs.size(); i++){
             ArmorTool::drawRotatedRect(src, armorStructs[i].armorRect, cv::Scalar(0, 165, 255), 2, 16);
             cv::circle(src, armorStructs[i].hitPoint, 1, cv::Scalar(0, 165, 255), 4);  // 画半径为1的圆(画点）
-        }
-        
+        }//绘制矩形
+
         //TestDemo
         if(armorStructs.size() > 0){
 
             int hitPointx = armorStructs[0].hitPoint.x;
             int hitPointy = armorStructs[0].hitPoint.y;
             int hitPointData = hitPointx * 1000 + hitPointy;
-            SerialPort::getHitPointData(hitPointData);
+            mutex2.unlock();
+            *sentData = hitPointData;
+            mutex2.lock();
+            SerialPort::getHitPointData(hitPointx,hitPointy);
         }
 
         allContours.clear();                                //轮廓
@@ -137,11 +142,12 @@ void IdentifyArmor::FindLightbar(cv::Mat &preprocessedImage) {
                 continue;
 
             filteredLightBars.push_back(scanRect);
-
+            /*
             for (int j = 0; j < 4; j++)
             {
                 cv::line(src, vertices[j], vertices[(j + 1) % 4], cv::Scalar(219,112,147),1);
             }
+            */
             //std::cout << "scanRect.size.area():" << scanRect.size.area() << std::endl;
 
             /*
@@ -159,6 +165,31 @@ void IdentifyArmor::FindLightbar(cv::Mat &preprocessedImage) {
             possibleRects.push_back(scanRect);
             //std::cout << "*" << std::endl;*/
         }
+    }
+
+    //std::cout << filteredLightBars.size() << std::endl;
+
+    for (int i = 0; i < filteredLightBars.size(); ++i) {
+        for (int j = i+1; j < filteredLightBars.size(); ++j) {
+            //std::cout << filteredLightBars[i].size.area() << std::endl;
+            //ArmorTool::drawRotatedRect(src, filteredLightBars[i], cv::Scalar(0, 0, 0), 2, 16);
+            //ArmorTool::drawRotatedRect(src, filteredLightBars[j], cv::Scalar(255,255,255), 2, 16);
+            if(filteredLightBars[i].size.area() >= filteredLightBars[j].size.area()){
+                if((abs(filteredLightBars[j].center.x - filteredLightBars[i].center.x) < filteredLightBars[i].size.width/2) && (abs(filteredLightBars[j].center.y - filteredLightBars[i].center.y) < filteredLightBars[i].size.height/2)){
+                    filteredLightBars.erase(std::begin(filteredLightBars) + j);
+                }
+            }
+            if(filteredLightBars[j].size.area() > filteredLightBars[i].size.area()){
+                if((abs(filteredLightBars[j].center.x - filteredLightBars[i].center.x) < filteredLightBars[j].size.width/2) && (abs(filteredLightBars[j].center.y - filteredLightBars[i].center.y) < filteredLightBars[j].size.height/2)){
+                    filteredLightBars.erase(std::begin(filteredLightBars) + i);
+                }
+            }
+        }
+    }
+
+    // std::cout << filteredLightBars.size() << std::endl;
+    for (int i = 0; i < filteredLightBars.size(); ++i) {
+        ArmorTool::drawRotatedRect(src, filteredLightBars[i], cv::Scalar(15, 198, 150), 1, 16);
     }
 }
 
